@@ -59,3 +59,26 @@ func handlerLogin(s *state, cmd command) error {
 	fmt.Println("User switched successfully")
 	return nil
 }
+
+func handlerListUsers(s *state, cmd command) error {
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("couldn't get users: %w", err)
+	}
+
+	if len(users) == 0 {
+		fmt.Println("There are no users in the database")
+		return nil
+	}
+
+	fmt.Println("Users are:")
+	for _, user := range users {
+		if s.cfg.CurrentUserName == user.Name {
+			fmt.Printf("* %v (current)\n", user.Name)
+			continue
+		}
+		fmt.Printf("* %v\n", user.Name)
+	}
+
+	return nil
+}
